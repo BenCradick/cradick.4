@@ -12,15 +12,15 @@
 
 
 //referencable function prototypes
-void increment(vClock*);
-void messageIncrement(vClock*);
-void detach(vClock*);
-void clean(vClock*);
-vClock* init(){
-    vClock *clock = malloc(sizeof(vClock));
+void increment(VClock*);
+void messageIncrement(VClock*);
+void detach(VClock*);
+void clean(VClock*);
+VClock* vClock(){
+    VClock *clock = malloc(sizeof(VClock));
 
-    clock->nano_key = ftok("oss", 1);
-    clock->sec_key = ftok("oss", 2);
+    clock->nano_key = ftok(".", 1);
+    clock->sec_key = ftok(".", 2);
 
     clock->nano_shmid = shmget(clock->nano_key, sizeof(long), 0666 | IPC_CREAT);
     clock->sec_shmid = shmget(clock->sec_key, sizeof(long), 0666 | IPC_CREAT);
@@ -37,7 +37,7 @@ vClock* init(){
 }
 
 //increments by 1 sec and [0,1000] nanoseconds as per instructions
-void increment(vClock* clock){
+void increment(VClock* clock){
     const long BILLION = 1000000000;
     srand((unsigned int)time(0));
 
@@ -51,7 +51,7 @@ void increment(vClock* clock){
     }
 
 }
-void messageIncrement(vClock* clock){
+void messageIncrement(VClock* clock){
     const long BILLION = 1000000000;
     srand((unsigned int)time(0));
 
@@ -64,12 +64,12 @@ void messageIncrement(vClock* clock){
     }
 }
 // detaches local clock from shared memory
-void detach(vClock* clock){
+void detach(VClock* clock){
     shmdt(clock->nano);
     shmdt(clock->sec);
 }
 // erases the shared memory
-void clean(vClock* clock){
+void clean(VClock* clock){
     shmctl(clock->nano_shmid, IPC_RMID, NULL);
     shmctl(clock->nano_shmid, IPC_RMID, NULL);
 }

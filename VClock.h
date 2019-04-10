@@ -5,11 +5,11 @@
 #ifndef CRADICK_4_VCLOCK_H
 #define CRADICK_4_VCLOCK_H
 
-#include <ntsid.h>
 
-struct vClock;
+#include <sys/types.h>
+struct VClock;
 
-typedef struct vClock {
+typedef struct VClock {
     // sec short for second, nano is nano second
     key_t nano_key;
     key_t sec_key;
@@ -20,12 +20,12 @@ typedef struct vClock {
     long* nano;
     long* sec;
 
-    void(*increment)(struct vClock*);
-    void(*messageIncrement)(struct vClock*);
-    void(*detach)(struct vClock*);
-    void(*clean)(struct vClock*);
+    void(*increment)(struct VClock*);
+    void(*messageIncrement)(struct VClock*);
+    void(*detach)(struct VClock*);
+    void(*clean)(struct VClock*);
 
-}vClock;
+}VClock;
 
-vClock* init();
+VClock* vClock();
 #endif //CRADICK_4_VCLOCK_H
