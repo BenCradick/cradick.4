@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "Bit_Vector.h"
+#include "BitVector.h"
 
 int main() {
     unsigned int block = 0;
