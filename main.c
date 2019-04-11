@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "BitVector.h"
+#include "TableColumns.h"
 
 int main() {
     unsigned int block = 0;
