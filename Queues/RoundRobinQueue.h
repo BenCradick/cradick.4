@@ -9,6 +9,7 @@
 
 typedef struct RoundRobinQueue{
     Queue* queue;
+
 }RoundRobinQueue;
-RoundRobinQueue* roundRobinQueue();
+RoundRobinQueue* roundRobinQueue(QueueNode*);
 #endif //CRADICK_4_ROUNDROBINQUEUE_H

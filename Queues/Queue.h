@@ -12,6 +12,9 @@ typedef struct Queue{
     QueueNode* first;
     QueueNode* last;
 
+    void (*enQueue)(struct QueueNode*, struct Queue*);
+    QueueNode* (*deQueue)(struct Queue*);
+
 } Queue;
 Queue* queue(QueueNode*);
 
