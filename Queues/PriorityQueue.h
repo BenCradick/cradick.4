@@ -10,7 +10,13 @@
 #include "Queue.h"
 
 typedef struct PriorityQueue{
+
     Queue* queue;
+
+    void(*enQueue)(struct QueueNode*, struct PriorityQueue*);
+
+    QueueNode* (*deQueue)(struct PriorityQueue*);
+
 }PriorityQueue;
 
 PriorityQueue* priorityQueue(QueueNode*);
