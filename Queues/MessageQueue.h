@@ -17,7 +17,7 @@ typedef struct MessageQueue{
     int message_id;
 
     void(*sendMessage)(const char*, int, long, struct MessageQueue*);
-    const char*(*recieveMessage)(int, long, struct MessageQueue*);
+    const char*(*receiveMessage)(int, long, struct MessageQueue*);
     void(*deleteQueue)(struct MessageQueue*);
 }MessageQueue;
 

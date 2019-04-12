@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 void sendMessage(const char*, int,long, MessageQueue* );
-const char* recieveMessage(int, long, struct MessageQueue*);
+const char* receiveMessage(int message_flag, long flag, struct MessageQueue *this);
 void deleteQueue(struct MessageQueue*);
 MessageQueue* messageQueue(int id){
     id++; //this needs to happen because this struct will be used in an array whose index will dictate passed value of id
@@ -26,7 +26,7 @@ MessageQueue* messageQueue(int id){
     }
 
     this->sendMessage = &sendMessage;
-    this->recieveMessage = &recieveMessage;
+    this->receiveMessage = &receiveMessage;
     this->deleteQueue = &deleteQueue;
 
     return this;
@@ -48,7 +48,7 @@ void sendMessage(const char message[1], int message_flag, long flags, MessageQue
         exit(EXIT_FAILURE);
     }
 }
-const char* recieveMessage(int message_flag, long flag, MessageQueue* this){
+const char* receiveMessage(int message_flag, long flag, MessageQueue *this){
     message_buffer buffer;
     buffer.message_flag = flag;
 
@@ -60,5 +60,8 @@ const char* recieveMessage(int message_flag, long flag, MessageQueue* this){
     return buffer.message;
 }
 void deleteQueue(MessageQueue* this){
-
+    if(msgctl(this->message_id, IPC_RMID, NULL) == -1){
+        perror("msgctl: ");
+        exit(EXIT_FAILURE);
+    }
 }
