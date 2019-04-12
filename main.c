@@ -1,6 +1,7 @@
 #include <stdio.h>
-#include "BitVector.h"
-#include "TableColumns.h"
+#include "ProcessTable/BitVector.h"
+#include "ProcessTable/TableColumns.h"
+#include "
 
 int main() {
     unsigned int block = 0;
