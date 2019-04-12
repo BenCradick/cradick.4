@@ -14,8 +14,8 @@
 //referencable function prototypes
 void increment(VClock*);
 void messageIncrement(VClock*);
-void detach(VClock*);
-void clean(VClock*);
+void _detach(VClock*);
+void _clean(VClock*);
 VClock* vClock(){
     VClock *clock = malloc(sizeof(VClock));
 
@@ -30,8 +30,8 @@ VClock* vClock(){
 
     clock->increment  = &increment;
     clock->messageIncrement = &messageIncrement;
-    clock->detach = &detach;
-    clock->clean = &clean;
+    clock->detach = &_detach;
+    clock->clean = &_clean;
 
     return clock;
 }
@@ -64,12 +64,12 @@ void messageIncrement(VClock* clock){
     }
 }
 // detaches local clock from shared memory
-void detach(VClock* clock){
+void _detach(VClock* clock){
     shmdt(clock->nano);
     shmdt(clock->sec);
 }
 // erases the shared memory
-void clean(VClock* clock){
+void _clean(VClock* clock){
     shmctl(clock->nano_shmid, IPC_RMID, NULL);
     shmctl(clock->nano_shmid, IPC_RMID, NULL);
 }

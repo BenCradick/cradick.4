@@ -17,6 +17,7 @@ PriorityQueue* priorityQueue(QueueNode* head){
 }
 void enQueue(QueueNode* new, PriorityQueue* this){
     this->queue->enQueue(new, this->queue);
+    this->queue->last->next = NULL;
 }
 
 QueueNode* deQueue(PriorityQueue* this){

@@ -14,6 +14,7 @@ typedef struct Queue{
 
     void (*enQueue)(struct QueueNode*, struct Queue*);
     QueueNode* (*deQueue)(struct Queue*);
+    int(*isEmpty)(struct Queue*);
 
 } Queue;
 Queue* queue(QueueNode*);
