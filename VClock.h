@@ -7,6 +7,9 @@
 
 
 #include <sys/types.h>
+
+#define QUANTUM 10000000
+#define BILLION 1000000000
 struct VClock;
 
 typedef struct VClock {
@@ -17,13 +20,15 @@ typedef struct VClock {
     int nano_shmid;
     int sec_shmid;
 
-    long* nano;
-    long* sec;
+    int* nano;
+    int* sec;
 
     void(*increment)(struct VClock*);
     void(*messageIncrement)(struct VClock*);
     void(*detach)(struct VClock*);
     void(*clean)(struct VClock*);
+
+    int(*total)(struct VClock*);
 
 }VClock;
 

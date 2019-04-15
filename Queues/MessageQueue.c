@@ -5,8 +5,10 @@
 #include "MessageQueue.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <memory.h>
+
 void sendMessage(const char*, int,long, MessageQueue* );
-const char* receiveMessage(int message_flag, long flag, struct MessageQueue *this);
+const char receiveMessage(int message_flag, long flag, struct MessageQueue *this);
 void deleteQueue(struct MessageQueue*);
 MessageQueue* messageQueue(int id){
     id++; //this needs to happen because this struct will be used in an array whose index will dictate passed value of id
@@ -21,7 +23,7 @@ MessageQueue* messageQueue(int id){
         perror("ftok: ");
     }
 
-    if((this->message_id = msgget(this->message_key, IPC_CREAT)) == -1){
+    if((this->message_id = msgget(this->message_key, PERMS | IPC_CREAT)) == -1){
         perror("msgget: ");
     }
 
@@ -35,29 +37,29 @@ MessageQueue* messageQueue(int id){
 
 typedef struct message_buffer{
     long message_flag;
-    const char* message;
+    char message[1];
 }message_buffer;
 
 void sendMessage(const char message[1], int message_flag, long flags, MessageQueue* this){
     message_buffer buffer;
-    buffer.message = message;
+    strncpy(buffer.message, message, 1);
     buffer.message_flag = flags;
 
-    if(msgsnd(this->message_id, &buffer, sizeof(message[1]), message_flag) == -1){
+    if(msgsnd(this->message_id, &buffer, sizeof(char), message_flag) == -1){
         perror("msgsend: ");
         exit(EXIT_FAILURE);
     }
 }
-const char* receiveMessage(int message_flag, long flag, MessageQueue *this){
+const char receiveMessage(int message_flag, long flag, MessageQueue *this){
     message_buffer buffer;
     buffer.message_flag = flag;
 
-    if(msgrcv(this->message_id, &buffer, sizeof(char), flag, 0) == -1){
+    if(msgrcv(this->message_id, &buffer, sizeof(char), flag, message_flag) == -1){
         perror("msgrcv: ");
         exit(EXIT_FAILURE);
     }
-
-    return buffer.message;
+    char* message = buffer.message;
+    return *message;
 }
 void deleteQueue(MessageQueue* this){
     if(msgctl(this->message_id, IPC_RMID, NULL) == -1){

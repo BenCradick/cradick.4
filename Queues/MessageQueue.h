@@ -8,7 +8,8 @@
 #include <sys/msg.h>
 
 #define PERMS 0666
-#define PARENT 202
+#define BLOCKED 202
+#define TERMINATION 203
 
 struct MessageQueue;
 
@@ -17,7 +18,7 @@ typedef struct MessageQueue{
     int message_id;
 
     void(*sendMessage)(const char*, int, long, struct MessageQueue*);
-    const char*(*receiveMessage)(int, long, struct MessageQueue*);
+    const char(*receiveMessage)(int, long, struct MessageQueue*);
     void(*deleteQueue)(struct MessageQueue*);
 }MessageQueue;
 
