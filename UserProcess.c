@@ -24,6 +24,8 @@ void awaitEvent(UserVariables*);
 void preemptiveTermination(UserVariables*);
 void updateTable(UserVariables*);
 
+void messageError(UserVariables*);
+
 
 //main mostly serves to initialize key variables.
 int main(int argc, char** argv){
@@ -101,6 +103,46 @@ void immediateTermination(UserVariables* variables){
 
 
 }
+void preemptiveTermination(UserVariables* variables){
+    variables->cpu_last_start_total = variables->clock->total(variables->clock);
+
+
+    int percent = rand()%98 + 1;
+
+    variables->time_slice = getTimeSlice(variables->row_in_table, variables->process_table);
+
+    long end_time = variables->cpu_last_start_total + variables->time_slice * (percent/100);
+
+    while(variables->clock->total(variables->clock) < end_time);
+
+    variables->cpu_time_total += variables->clock->total(variables->clock) - variables->cpu_last_start_total;
+
+    sprintf(&variables->message, "%d", variables->row_in_table);
+
+    variables->blocked_queue->sendMessage(&variables->message, 0, 0, variables->blocked_queue);
+
+    variables->message = variables->message_queue->receiveMessage(0, 0, variables->message_queue);
+    messageError(variables);
+
+    variables->row_in_table = getRowInProcessTable(variables->id, variables->process_table);
+    variables->time_slice = getTimeSlice(variables->row_in_table, variables->process_table);
+
+    end_time = variables->clock->total(variables->clock) + variables->time_slice;
+    variables->cpu_last_start_total = variables->clock->total(variables->clock);
+
+    while(variables->clock->total(variables->clock) < end_time);
+
+    updateTable(variables);
+
+    sprintf(&variables->message, "%d", variables->row_in_table);
+
+    variables->termination_queue->sendMessage(&variables->message, 0 , 0, variables->message_queue);
+
+    variables->process_table->detach(variables->process_table);
+    
+    exit(EXIT_SUCCESS);
+
+}
 void awaitEvent(UserVariables* variables){
     variables->cpu_last_start_total = variables->clock->total(variables->clock);
 
@@ -141,11 +183,9 @@ void awaitEvent(UserVariables* variables){
 
             variables->blocked_queue->sendMessage(message, 0, 0, variables->blocked_queue);
             variables->message = variables->message_queue->receiveMessage(0,0, variables->message_queue);
+            messageError(variables);
 
-            if(variables->message != 'g'){
-                fprintf(stderr, "Unknown message type %s\n", &variables->message);
-                exit(EXIT_FAILURE);
-            }
+
 
             variables->cpu_last_start_total = variables->clock->total(variables->clock);
 
@@ -254,4 +294,11 @@ void updateTable(UserVariables* variables){
 
     variables->process_table->process_table[variables->row_in_table][last_burst_sec] =
             (int)(((variables->clock->total(variables->clock) - variables->cpu_last_start_total))/BILLION);
+}
+
+void messageError(UserVariables* variables){
+    if(variables->message != 'g'){
+        fprintf(stderr, "Unknown message type %s\n", &variables->message);
+        exit(EXIT_FAILURE);
+    }
 }
